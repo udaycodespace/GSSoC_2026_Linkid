@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useRef, useCallback } from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -15,21 +15,36 @@ export default function CreateLinkId() {
     const [available, setAvailable] = useState<null | boolean>(null);
     const [suggestions, setSuggestions] = useState<string[]>([]);
     const [loading, setLoading] = useState(false);
+    const [checking, setChecking] = useState(false);
+    const abortRef = useRef<AbortController | null>(null);
 
-    async function checkUsername(value: string) {
+    const checkUsername = useCallback(async (value: string) => {
         setUsername(value);
 
         if (value.length < 3) {
             setAvailable(null);
             setSuggestions([]);
+            setChecking(false);
             return;
         }
 
-        const res = await fetch(`/api/username/check?username=${value}`);
+        abortRef.current?.abort();
+        abortRef.current = new AbortController();
+        setChecking(true);
+
+        try {
+        const res = await fetch(`/api/username/check?username=${value}`, {
+            signal: abortRef.current.signal,
+        });
         const data = await res.json();
         setAvailable(data.available);
         setSuggestions(data.suggestions ?? []);
-    }
+        } catch (e) {
+        if ((e as Error).name !== "AbortError") throw e;
+        } finally {
+        setChecking(false);
+        }
+    }, []);
 
     async function createLinkId() {
         setLoading(true);
@@ -81,7 +96,10 @@ export default function CreateLinkId() {
                                 />
                             </div>
 
-                            {available === true && (
+                            {checking && (
+                                <p className="text-sm text-muted-foreground">Checking...</p>
+                            )}
+                            {!checking && available === true && (
                                 <p className="text-sm text-green-500">
                                     Username available
                                 </p>
