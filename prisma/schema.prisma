@@ -34,6 +34,7 @@ model Link {
   url       String
   order     Int      @default(0)
   clicks    Int      @default(0)
+  isPublic  Boolean  @default(true)
   userId    String
   user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
   createdAt DateTime @default(now())

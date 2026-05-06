@@ -30,7 +30,7 @@ function PlatformChip({
     icon: Icon,
     label,
 }: {
-    icon: any;
+    icon: React.ComponentType<{ className?: string }>;
     label: string;
 }) {
     return (

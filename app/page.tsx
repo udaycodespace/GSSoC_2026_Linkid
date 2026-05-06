@@ -288,7 +288,7 @@ export default async function Home() {
                 ))}
               </div>
               <p className="text-muted-foreground mb-4 leading-relaxed">
-                &ldquo;LinkID's security features give me peace of mind. OAuth authentication and data privacy are exactly what I need for managing my professional presence.&rdquo;
+                &ldquo;LinkID&apos;s security features give me peace of mind. OAuth authentication and data privacy are exactly what I need for managing my professional presence.&rdquo;
               </p>
               <div className="flex items-center gap-3">
                 <div className="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center">

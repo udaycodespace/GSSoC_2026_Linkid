@@ -42,7 +42,7 @@ export default function EditProfileCard({
         const csrfToken = await getCsrfToken();
 
         const res = await fetch("/api/profile/update", {
-            method: "POST",
+            method: "PATCH",
             headers: {
                 "Content-Type": "application/json",
                 "x-csrf-token": csrfToken,

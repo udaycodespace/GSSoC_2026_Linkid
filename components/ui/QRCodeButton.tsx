@@ -2,6 +2,7 @@
 "use client";
 
 import { useState } from "react";
+import Image from "next/image";
 import { QrCode, Download } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
@@ -38,7 +39,21 @@ export default function QRCodeButton({ qrCode }: QRCodeButtonProps) {
             <DialogTitle className="text-center">Your QR Code</DialogTitle>
           </DialogHeader>
           <div className="flex flex-col items-center gap-4 py-2">
-            <img src={qrCode} alt="QR Code" className="h-48 w-48 rounded-md border" />
+            {qrCode ? (
+              <Image
+                src={qrCode}
+                alt="QR Code"
+                width={192}
+                height={192}
+                sizes="192px"
+                priority
+                className="h-48 w-48 rounded-md border bg-white object-contain"
+              />
+            ) : (
+              <div className="flex h-48 w-48 items-center justify-center rounded-md border bg-muted text-sm text-muted-foreground">
+                QR code unavailable
+              </div>
+            )}
             <Button onClick={handleDownload} className="w-full gap-2">
               <Download className="h-4 w-4" />
               Download QR Code

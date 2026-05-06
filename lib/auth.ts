@@ -11,15 +11,23 @@ export const authOptions: NextAuthOptions = {
     adapter: PrismaAdapter(prisma),
 
     providers: [
-        Google({
-            clientId: process.env.GOOGLE_CLIENT_ID!,
-            clientSecret: process.env.GOOGLE_CLIENT_SECRET!,
-        }),
+        ...(process.env.GOOGLE_CLIENT_ID && process.env.GOOGLE_CLIENT_SECRET
+            ? [
+                  Google({
+                      clientId: process.env.GOOGLE_CLIENT_ID,
+                      clientSecret: process.env.GOOGLE_CLIENT_SECRET,
+                  }),
+              ]
+            : []),
 
-        GitHub({
-            clientId: process.env.GITHUB_CLIENT_ID!,
-            clientSecret: process.env.GITHUB_CLIENT_SECRET!,
-        }),
+        ...(process.env.GITHUB_CLIENT_ID && process.env.GITHUB_CLIENT_SECRET
+            ? [
+                  GitHub({
+                      clientId: process.env.GITHUB_CLIENT_ID,
+                      clientSecret: process.env.GITHUB_CLIENT_SECRET,
+                  }),
+              ]
+            : []),
 
         Credentials({
             name: "Email & Password",
@@ -58,13 +66,18 @@ export const authOptions: NextAuthOptions = {
     },
 
     callbacks: {
-        async jwt({ token, trigger, session }) {
+        async jwt({ token, trigger, session, user }) {
             if (trigger === "update" && "image" in (session ?? {})) {
                 token.image = session.image ?? null;
             }
-            if (!token.image) {
+            if (!token.image && user && "image" in user && user.image) {
+                token.image = user.image;
+                return token;
+            }
+
+            if (!token.image && token.email) {
                 const user = await prisma.user.findUnique({
-                    where: { email: token.email! },
+                    where: { email: token.email },
                     select: { image: true },
                 });
                 token.image = user?.image ?? null;
@@ -74,6 +87,7 @@ export const authOptions: NextAuthOptions = {
         async session({ session, token }) {
             if (session.user) {
                 session.user.image = token.image as string ?? null;
+                session.user.id = token.sub as string;
             }
             return session;
         },

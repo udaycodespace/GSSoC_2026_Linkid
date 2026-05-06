@@ -20,6 +20,7 @@ export default function RegisterPage() {
     const [loading, setLoading] = useState(false);
     const [showPassword, setShowPassword] = useState(false);
     const [password, setPassword] = useState("");
+    const [submitError, setSubmitError] = useState<string | null>(null);
     const csrfToken = useCsrf();
 
     const getPasswordError = (value: string) => {
@@ -37,6 +38,7 @@ export default function RegisterPage() {
     async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
         e.preventDefault();
         setLoading(true);
+        setSubmitError(null);
 
         const form = e.currentTarget;
         const requestCsrfToken = csrfToken || await getCsrfToken();
@@ -61,7 +63,8 @@ export default function RegisterPage() {
         if (res.ok) {
             router.push("/login");
         } else {
-            alert("Registration failed");
+            const data = await res.json().catch(() => null) as { error?: string } | null;
+            setSubmitError(data?.error ?? "Registration failed");
         }
     }
 
@@ -79,6 +82,12 @@ export default function RegisterPage() {
                     </div>
 
                     <div className="space-y-2">
+                        {submitError && (
+                            <p className="text-sm text-red-500" role="alert">
+                                {submitError}
+                            </p>
+                        )}
+
                         <Button
                             variant="outline"
                             className="flex w-full items-center justify-center gap-2"

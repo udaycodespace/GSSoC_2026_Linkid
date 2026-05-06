@@ -48,6 +48,7 @@ export default async function PublicProfile({
                 bio: true,
                 image: true,
                 links: {
+                    where: { isPublic: true },
                     orderBy: { order: "asc" },
                 },
             },

@@ -4,7 +4,10 @@ import prisma from "@/lib/prisma";
 
 export async function POST(req: Request) {
     try {
-        const { name, email, password } = await req.json();
+        const body = await req.json();
+        const name = typeof body?.name === "string" ? body.name.trim() : "";
+        const email = typeof body?.email === "string" ? body.email.trim().toLowerCase() : "";
+        const password = typeof body?.password === "string" ? body.password : "";
 
         if (!email || !password) {
             return NextResponse.json(
@@ -12,6 +15,7 @@ export async function POST(req: Request) {
                 { status: 400 }
             );
         }
+        const normalizedEmail = email.toLowerCase().trim();
 
         const passwordRegex =
   /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&]).{8,}$/;
@@ -22,32 +26,42 @@ export async function POST(req: Request) {
                 { status: 400 }
             );
         }
-
-        const existingUser = await prisma.user.findUnique({
-            where: { email },
-        });
-
-        if (existingUser) {
-            return NextResponse.json(
-                { error: "User already exists" },
-                { status: 409 }
-            );
-        }
-
         const hashedPassword = await bcrypt.hash(password, 10);
-
-        await prisma.user.create({
-            data: {
-                name,
-                email,
-                password: hashedPassword,
+        
+        try {
+            await prisma.user.create({
+                data: {
+                    name,
+                    email: normalizedEmail,
+                    password: hashedPassword,
             },
         });
+    } catch (err: any) {
+        if (err.code === "P2002") {
 
-        return NextResponse.json({ success: true });
+      return NextResponse.json (
+        {error: "User already exists"},
+        {status: 409} 
+    );
+    }
+    throw err;
+    }
+        return NextResponse.json ({ success: true, message: "User created successfully"},
+        {status: 201}
+    );
+
     } catch (err) {
+        console.error("Registration error:", err);
+
+        const message = err instanceof Error ? err.message : "Something went wrong";
+
         return NextResponse.json(
-            { error: "Something went wrong" },
+            {
+                error:
+                    process.env.NODE_ENV === "production"
+                        ? "Something went wrong"
+                        : message,
+            },
             { status: 500 }
         );
     }

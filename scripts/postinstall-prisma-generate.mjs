@@ -11,7 +11,7 @@ if (!hasDbUrl) {
 
 try {
   execSync("npx prisma generate", { stdio: "inherit" });
-} catch (err) {
+} catch {
   // Keep installs usable; builds should still run `prisma generate` explicitly.
   console.warn("[postinstall] `prisma generate` failed; continuing install.");
   process.exit(0);

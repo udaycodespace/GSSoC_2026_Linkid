@@ -11,8 +11,9 @@ import {
 } from "lucide-react";
 import { FaDiscord, FaDribbble, FaMedium } from "react-icons/fa";
 import { SiHashnode, SiDevdotto } from "react-icons/si";
+import type { ComponentType, SVGProps } from "react";
 
-export const PLATFORM_ICONS: Record<string, any> = {
+export const PLATFORM_ICONS: Record<string, ComponentType<SVGProps<SVGSVGElement>>> = {
     github: Github,
     linkedin: Linkedin,
     leetcode: Code2,

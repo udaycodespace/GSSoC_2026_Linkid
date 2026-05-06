@@ -5,8 +5,6 @@ import { redirect } from "next/navigation";
 import prisma from "@/lib/prisma";
 import QRCodeButton from "@/components/ui/QRCodeButton";
 
-const BASE_URL = process.env.NEXT_PUBLIC_BASE_URL ?? "https://linkid.qzz.io";
-
 async function generateQRCode() {
     try {
         const session = await getServerSession(authOptions);

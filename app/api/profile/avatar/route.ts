@@ -56,7 +56,7 @@ export async function POST(req: Request) {
 
     return Response.json({ success: true, imageUrl: result.secure_url });
 }
-export async function DELETE(req: Request) {
+export async function DELETE() {
     const session = await getServerSession(authOptions);
     if (!session?.user?.email) {
         return Response.json({ error: "Unauthorized" }, { status: 401 });

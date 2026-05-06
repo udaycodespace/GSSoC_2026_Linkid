@@ -6,15 +6,12 @@ import { Button } from "@/components/ui/button";
 import { getCsrfToken } from "@/lib/csrfClient";
 import toast from "react-hot-toast";
 
-type DashboardLink = {
-    id: string;
-    url: string;
-} & Record<string, unknown>;
+import type { Link as ProfileLink } from "@/app/[username]/types/type";
 
 export default function AddLinkBox({
     onAdded,
 }: {
-    onAdded: (link: DashboardLink) => void;
+    onAdded: (link: ProfileLink) => void;
 }) {
     const [url, setUrl] = useState("");
     const [label, setLabel] = useState("");

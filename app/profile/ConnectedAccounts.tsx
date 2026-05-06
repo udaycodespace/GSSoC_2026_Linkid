@@ -1,9 +1,10 @@
 import { Badge } from "@/components/ui/badge";
+import type { Account } from "@prisma/client";
 
 export function ConnectedAccounts({
     accounts,
 }: {
-    accounts: any[];
+    accounts: Account[];
 }) {
     if (accounts.length === 0) {
         return (

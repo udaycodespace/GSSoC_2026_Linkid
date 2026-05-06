@@ -6,7 +6,7 @@ export default function UsernameNotFound() {
       <div className="mx-auto max-w-md rounded-2xl border bg-background p-8 text-center shadow-sm">
         <h1 className="text-2xl font-semibold text-foreground">404 Not Found</h1>
         <p className="mt-2 text-sm text-muted-foreground">
-          Opps! The page you're looking for doesn't exist.
+          Opps! The page you&apos;re looking for doesn&apos;t exist.
         </p>
 
         <div className="mt-6 flex justify-center gap-3">

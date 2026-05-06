@@ -89,28 +89,28 @@ export async function POST(req: Request) {
         );
     }
 
-    
     try {
-        const link = await prisma.$transaction(async (tx) => {
+        const link = await prisma.$transaction(async (tx: Prisma.TransactionClient) => {
             const maxOrder = await tx.link.aggregate({
                 where: { userId: user.id },
                 _max: { order: true },
             });
 
             return tx.link.create({
-            data: {
-                userId: user.id,
-                platform: finalPlatform,
-                label: finalLabel,
-                url: finalUrl,
-                order: (maxOrder._max.order ?? 0) + 1,
+                data: {
+                    userId: user.id,
+                    platform: finalPlatform,
+                    label: finalLabel,
+                    url: finalUrl,
+                    order: (maxOrder._max.order ?? 0) + 1,
                 },
             });
         });
 
         return NextResponse.json({ link });
-    } catch (err: any) {
-        if (err?.code === "P2002") {
+    } catch (err: unknown) {
+        const error = err as { code?: string };
+        if (error?.code === "P2002") {
             return NextResponse.json(
                 { error: `You already added your ${finalLabel} link.` },
                 { status: 409 }

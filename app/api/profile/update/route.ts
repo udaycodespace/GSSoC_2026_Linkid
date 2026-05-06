@@ -35,8 +35,9 @@ export async function PATCH(req: NextRequest) {
 
     return NextResponse.json({ success: true, user }, { status: 200 });
 
-  } catch (error: any) {
-    if (error.code === "P2002" && error.meta?.target?.includes("username")) {
+  } catch (error: unknown) {
+    const err = error as { code?: string; meta?: { target?: string[] } };
+    if (err.code === "P2002" && err.meta?.target?.includes("username")) {
       return NextResponse.json({ error: "Username already taken" }, { status: 409 });
     }
     console.error("Profile update error:", error);

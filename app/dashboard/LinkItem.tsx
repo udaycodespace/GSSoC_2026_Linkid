@@ -10,20 +10,25 @@ import {
     X,
     Globe,
     Trash,
+    Eye,
+    EyeOff,
 } from "lucide-react";
 import toast from "react-hot-toast";
 import { useState } from "react";
 import { PLATFORM_ICONS } from "@/lib/platformIcons";
+import type { Link as ProfileLink } from "@/app/[username]/types/type";
 
 export function LinkItem({
     link,
     username,
     onUpdate,
+    onToggleVisibility,
     onDelete,
 }: {
-    link: { id: string; platform: string; url: string; clicks: number };
+    link: ProfileLink;
     username: string;
     onUpdate: (id: string, url: string) => Promise<void>;
+    onToggleVisibility: (id: string, isPublic: boolean) => Promise<void>;
     onDelete: (id: string) => Promise<void>;
 }) {
     const Icon = PLATFORM_ICONS[link.platform] ?? Globe;
@@ -63,10 +68,28 @@ export function LinkItem({
                         <p className="text-xs text-muted-foreground mt-0.5">
                             {link.clicks} {link.clicks === 1 ? "click" : "clicks"}
                         </p>
+                        <p className="mt-1 inline-flex items-center gap-1 rounded-full border px-2 py-0.5 text-xs text-muted-foreground">
+                            {link.isPublic ? <Eye className="h-3 w-3" /> : <EyeOff className="h-3 w-3" />}
+                            {link.isPublic ? "Public" : "Private"}
+                        </p>
                     </div>
                 </div>
 
-                <div className="flex gap-1 justify-end">
+                <div className="flex flex-wrap gap-1 justify-end">
+                    <Button
+                        size="icon"
+                        variant="ghost"
+                        onClick={() => onToggleVisibility(link.id, !link.isPublic)}
+                        aria-label={link.isPublic ? "Make link private" : "Make link public"}
+                        title={link.isPublic ? "Make link private" : "Make link public"}
+                    >
+                        {link.isPublic ? (
+                            <EyeOff className="h-4 w-4" />
+                        ) : (
+                            <Eye className="h-4 w-4" />
+                        )}
+                    </Button>
+
                     <Button size="icon" variant="ghost" onClick={copy}>
                         {copied ? (
                             <Check className="h-4 w-4 text-green-600" />
@@ -75,8 +98,8 @@ export function LinkItem({
                         )}
                     </Button>
 
-                    <a href={link.url} target="_blank">
-                        <Button size="icon" variant="ghost">
+                    <a href={link.url} target="_blank" rel="noopener noreferrer" aria-label={`Open ${link.label ?? link.platform} in new tab`}> 
+                        <Button size="icon" variant="ghost" title={`Open ${link.label ?? link.platform}`}>
                             <ExternalLink className="h-4 w-4" />
                         </Button>
                     </a>

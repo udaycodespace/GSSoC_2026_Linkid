@@ -14,6 +14,31 @@ export default function LoginPage() {
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
     const [showPassword, setShowPassword] = useState(false);
+    const [loading, setLoading] = useState(false);
+    const [error, setError] = useState<string | null>(null);
+
+    async function handleLogin() {
+        setLoading(true);
+        setError(null);
+
+        const response = await signIn("credentials", {
+            email,
+            password,
+            callbackUrl: "/dashboard",
+            redirect: false,
+        });
+
+        setLoading(false);
+
+        if (response?.error) {
+            setError("Login failed. Check your email and password.");
+            return;
+        }
+
+        if (response?.url) {
+            window.location.href = response.url;
+        }
+    }
 
     return (
         <>
@@ -59,6 +84,12 @@ export default function LoginPage() {
 
                     {/* FORM */}
                     <div className="space-y-3">
+                        {error && (
+                            <p className="text-sm text-red-500" role="alert">
+                                {error}
+                            </p>
+                        )}
+
                         <Input
                             type="email"
                             placeholder="Email"
@@ -101,15 +132,10 @@ export default function LoginPage() {
 
                         <Button
                             className="w-full"
-                            onClick={() =>
-                                signIn("credentials", {
-                                    email,
-                                    password,
-                                    callbackUrl: "/dashboard",
-                                })
-                            }
+                            onClick={handleLogin}
+                            disabled={loading}
                         >
-                            Login with Email
+                            {loading ? "Logging in..." : "Login with Email"}
                         </Button>
                     </div>
 

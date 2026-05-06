@@ -6,6 +6,7 @@ export type Link = {
     url: string;
     order: number;
     clicks: number;
+    isPublic: boolean;
     userId: string;
 }
 
