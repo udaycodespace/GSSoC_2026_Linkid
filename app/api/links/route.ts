@@ -125,3 +125,24 @@ export async function POST(req: Request) {
         );
     }
 }
+
+export async function GET(req: Request) {
+    const session = await getServerSession(authOptions);
+
+    if (!session?.user?.email) {
+        return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
+
+    const user = await prisma.user.findUnique({ where: { email: session.user.email } });
+    if (!user) return NextResponse.json({ links: [] });
+
+    const links = await prisma.link.findMany({
+        where: { userId: user.id },
+        orderBy: [
+            { order: 'asc' },
+            { createdAt: 'asc' }
+        ],
+    });
+
+    return NextResponse.json({ links });
+}

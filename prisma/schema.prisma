@@ -44,6 +44,8 @@ model Link {
   createdAt DateTime @default(now())
 
   @@unique([userId, platform])
+  @@index([userId, order])
+  @@index([userId, createdAt])
 }
 
 model ClickEvent {
