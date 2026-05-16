@@ -10,11 +10,11 @@ async function main() {
   let processedLinks = 0
 
   for (const u of users) {
-    const links = await prisma.link.findMany({
+        const links = await prisma.link.findMany({
       where: { userId: u.id },
       orderBy: [{ position: 'asc' }, { createdAt: 'asc' }, { id: 'asc' }],
       select: { id: true, position: true }
-    })
+        })
 
     const tx: any[] = []
     for (let i = 0; i < links.length; i++) {
@@ -40,6 +40,6 @@ async function main() {
 main()
   .catch((e) => {
     console.error('Backfill error', e)
-    process.exit(1)
+    process.exitCode = 1
   })
   .finally(() => prisma.$disconnect())
