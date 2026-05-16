@@ -77,7 +77,7 @@ export default async function PublicProfile({
                 image: true,
                 links: {
                     where: { isPublic: true },
-                    orderBy: { order: "asc" },
+                  orderBy: { position: "asc" },
                 },
             },
         });

@@ -53,18 +53,18 @@ export async function POST(req: Request) {
     }
 
     // Fetch current positions
-    const current = await prisma.link.findMany({ where: { userId: user.id }, select: { id: true, order: true } });
-    const currentMap = new Map(current.map((c) => [c.id, c.order]));
+    const current = await prisma.link.findMany({ where: { userId: user.id }, select: { id: true, position: true } });
+    const currentMap = new Map(current.map((c) => [c.id, c.position]));
 
     const updates = ids
-      .map((id, idx) => ({ id, newOrder: idx }))
-      .filter(({ id, newOrder }) => currentMap.get(id) !== newOrder);
+      .map((id, idx) => ({ id, newPosition: idx }))
+      .filter(({ id, newPosition }) => currentMap.get(id) !== newPosition);
 
     if (updates.length === 0) return NextResponse.json({ ok: true, changed: 0 });
 
     // Atomic update
     await prisma.$transaction(
-      updates.map((u) => prisma.link.update({ where: { id: u.id }, data: { order: u.newOrder } }))
+      updates.map((u) => prisma.link.update({ where: { id: u.id }, data: { position: u.newPosition } }))
     );
 
     return NextResponse.json({ ok: true, changed: updates.length });
