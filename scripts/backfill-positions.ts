@@ -12,7 +12,7 @@ async function main() {
   for (const u of users) {
     const links = await prisma.link.findMany({
       where: { userId: u.id },
-      orderBy: [{ position: 'asc' }, { createdAt: 'asc' }],
+      orderBy: [{ position: 'asc' }, { createdAt: 'asc' }, { id: 'asc' }],
       select: { id: true, position: true }
     })
 

@@ -41,8 +41,14 @@ function SortableLinkWrapper({ link, children }: { link: ProfileLink; children: 
     };
 
     return (
-        <div ref={setNodeRef} style={style} data-testid="link-item" data-link-id={link.id}>
-            {/* Drag handle can be provided via attributes/listeners if needed */}
+        <div
+            ref={setNodeRef}
+            style={style}
+            {...attributes}
+            {...listeners}
+            data-testid="link-item"
+            data-link-id={link.id}
+        >
             {children}
         </div>
     );

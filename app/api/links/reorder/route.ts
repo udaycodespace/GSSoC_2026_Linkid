@@ -30,7 +30,7 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: "orderedIds is required" }, { status: 400 });
     }
 
-    if (orderedIds.length > 1000) {
+    if (orderedIds.length > 500) {
       return NextResponse.json({ error: "Too many ids" }, { status: 400 });
     }
 
@@ -42,7 +42,7 @@ export async function POST(req: Request) {
     const existingIds = new Set(existingLinks.map((l) => l.id));
     const invalid = ids.filter((id) => !existingIds.has(id));
     if (invalid.length > 0) {
-      console.warn(`[SECURITY] User ${user.id} attempted to reorder unauthorized links: ${invalid.join(",")}`);
+      console.warn("[SECURITY] Unauthorized reorder attempt", { invalidCount: invalid.length });
       return NextResponse.json({ error: "Invalid link IDs" }, { status: 403 });
     }
 
