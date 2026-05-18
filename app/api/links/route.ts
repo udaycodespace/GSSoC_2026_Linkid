@@ -91,9 +91,9 @@ export async function POST(req: Request) {
 
     try {
         const link = await prisma.$transaction(async (tx: Prisma.TransactionClient) => {
-            const maxOrder = await tx.link.aggregate({
+            const maxPosition = await tx.link.aggregate({
                 where: { userId: user.id },
-                _max: { order: true },
+                _max: { position: true },
             });
 
             return tx.link.create({
@@ -102,7 +102,7 @@ export async function POST(req: Request) {
                     platform: finalPlatform,
                     label: finalLabel,
                     url: finalUrl,
-                    order: (maxOrder._max.order ?? 0) + 1,
+                    position: (maxPosition._max.position ?? 0) + 1,
                 },
             });
         });
@@ -124,4 +124,25 @@ export async function POST(req: Request) {
             { status: 500 }
         );
     }
+}
+
+export async function GET(req: Request) {
+    const session = await getServerSession(authOptions);
+
+    if (!session?.user?.email) {
+        return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
+
+    const user = await prisma.user.findUnique({ where: { email: session.user.email } });
+    if (!user) return NextResponse.json({ links: [] });
+
+    const links = await prisma.link.findMany({
+        where: { userId: user.id },
+        orderBy: [
+            { position: 'asc' },
+            { createdAt: 'asc' }
+        ],
+    });
+
+    return NextResponse.json({ links });
 }

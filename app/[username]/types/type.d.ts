@@ -4,7 +4,7 @@ export type Link = {
     createdAt: Date;
     platform: string;
     url: string;
-    order: number;
+    position: number;
     clicks: number;
     isPublic: boolean;
     userId: string;

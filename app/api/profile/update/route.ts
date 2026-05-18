@@ -45,7 +45,7 @@ export async function PATCH(req: NextRequest) {
     if (currentUser?.username && currentUser.username !== username) {
      // Check if new username is a previously used one (prevent reuse)
      const reserved = await prisma.usernameHistory.findUnique({
-      where: { previousUsername: username },
+      where: { username: username },
      });
 
     if (reserved) {
@@ -58,7 +58,7 @@ export async function PATCH(req: NextRequest) {
        // Save old username to history
       await prisma.usernameHistory.create({
        data: {
-        previousUsername: currentUser.username,
+        username: currentUser.username,
         userId,
          },
        });

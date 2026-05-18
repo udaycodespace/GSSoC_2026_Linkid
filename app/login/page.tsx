@@ -19,31 +19,34 @@ export default function LoginPage() {
 
   async function handleLogin() {
     const trimmedEmail = email.trim();
-    const trimmedPassword = password.trim();
 
-    if (!trimmedEmail.length || !trimmedPassword.length) {
+    if (!trimmedEmail.length || !password.length) {
       setError("Please fill in both email and password.");
       return;
     }
     setLoading(true);
     setError(null);
 
-    const response = await signIn("credentials", {
-      email: trimmedEmail,
-      password: trimmedPassword,
-      callbackUrl: "/dashboard",
-      redirect: false,
-    });
+    try {
+      const response = await signIn("credentials", {
+        email: trimmedEmail,
+        password: password,
+        callbackUrl: "/dashboard",
+        redirect: false,
+      });
 
-    setLoading(false);
+      if (response?.error) {
+        setError("Login failed. Check your email and password.");
+        return;
+      }
 
-    if (response?.error) {
-      setError("Login failed. Check your email and password.");
-      return;
-    }
-
-    if (response?.url) {
-      window.location.href = response.url;
+      if (response?.url) {
+        window.location.href = response.url;
+      }
+    } catch (err) {
+      setError("Login failed. Please try again.");
+    } finally {
+      setLoading(false);
     }
   }
 
@@ -146,7 +149,7 @@ export default function LoginPage() {
 
             <div className="flex justify-end">
               <Link
-                href="#"
+                href="/forgot-password"
                 className="text-sm text-muted-foreground hover:underline"
               >
                 Forgot password?

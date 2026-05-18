@@ -58,6 +58,8 @@ export function ProfileActionsCard({ hasPassword }: { hasPassword: boolean }) {
             setGeneratedCode(data?.code ?? "");
             setExpiresAt(data?.expiresAt ?? null);
             toast.success("Merge code generated");
+        } catch (error) {
+            toast.error(error instanceof Error ? error.message : "Unable to generate merge code");
         } finally {
             setLoading(false);
         }
@@ -98,8 +100,12 @@ export function ProfileActionsCard({ hasPassword }: { hasPassword: boolean }) {
 
     async function copyCode() {
         if (!generatedCode) return;
-        await navigator.clipboard.writeText(generatedCode);
-        toast.success("Merge code copied");
+        try {
+            await navigator.clipboard.writeText(generatedCode);
+            toast.success("Merge code copied");
+        } catch (error) {
+            toast.error("Unable to copy merge code");
+        }
     }
 
     return (

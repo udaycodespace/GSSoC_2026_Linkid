@@ -1,31 +1,28 @@
 generator client {
   provider = "prisma-client-js"
+  previewFeatures = ["driverAdapters"]
 }
 
 datasource db {
-  provider  = "postgresql"
+  provider = "postgresql"
 }
 
 model User {
-  id            String   @id @default(uuid())
+  id            String    @id @default(uuid())
   name          String?
-  email         String   @unique
+  email         String    @unique
   emailVerified DateTime?
   image         String?
-
   password      String?
+  username      String?   @unique
+  bio           String?
 
-  username      String?  @unique
-
-  bio            String?
-
-  links         Link[]
-  accounts      Account[]
-  sessions      Session[]
-  aliases       UserAlias[]
-  mergeRequests AccountMergeRequest[]
-  createdAt     DateTime @default(now())
-
+  links           Link[]
+  accounts        Account[]             @relation("accounts")
+  sessions        Session[]
+  aliases         UserAlias[]
+  mergeRequests   AccountMergeRequest[]
+  createdAt       DateTime              @default(now())
   usernameHistory UsernameHistory[]
 }
 
@@ -39,38 +36,38 @@ model UserAlias {
   @@index([userId])
 }
 
-
-
 model Link {
-  id        String   @id @default(uuid())
-  platform  String
-  label     String
-  url       String
-  order     Int      @default(0)
-  clicks    Int      @default(0)
-  isPublic  Boolean  @default(true)
-  userId    String
-  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
-  clickEvents ClickEvent[]
+  id             String               @id @default(uuid())
+  platform       String
+  label          String
+  url            String
+  position       Int                  @default(0)
+  clicks         Int                  @default(0)
+  isPublic       Boolean              @default(true)
+  userId         String
+  user           User                 @relation(fields: [userId], references: [id], onDelete: Cascade)
+  clickEvents    ClickEvent[]
   dailyAnalytics DailyLinkAnalytics[]
-  createdAt DateTime @default(now())
+  createdAt      DateTime             @default(now())
 
   @@unique([userId, platform])
+  @@index([userId, position])
+  @@index([userId, createdAt])
 }
 
 model ClickEvent {
   id              String   @id @default(uuid())
-  linkId           String
-  link             Link     @relation(fields: [linkId], references: [id], onDelete: Cascade)
-  userId           String
-  visitorKey       String?
-  userAgent        String?
-  referrer         String?
-  country          String?
-  deviceType       String?
-  isBot            Boolean  @default(false)
-  isUniqueVisitor  Boolean  @default(false)
-  createdAt        DateTime @default(now())
+  linkId          String
+  link            Link     @relation(fields: [linkId], references: [id], onDelete: Cascade)
+  userId          String
+  visitorKey      String?
+  userAgent       String?
+  referrer        String?
+  country         String?
+  deviceType      String?
+  isBot           Boolean  @default(false)
+  isUniqueVisitor Boolean  @default(false)
+  createdAt       DateTime @default(now())
 
   @@index([linkId, createdAt])
   @@index([userId, createdAt])
@@ -79,16 +76,16 @@ model ClickEvent {
 }
 
 model DailyLinkAnalytics {
-  id            String   @id @default(uuid())
-  linkId         String
-  link           Link     @relation(fields: [linkId], references: [id], onDelete: Cascade)
-  userId         String
-  date           DateTime
-  totalClicks    Int      @default(0)
-  uniqueClicks   Int      @default(0)
-  botClicks      Int      @default(0)
-  createdAt      DateTime @default(now())
-  updatedAt      DateTime @updatedAt
+  id           String   @id @default(uuid())
+  linkId       String
+  link         Link     @relation(fields: [linkId], references: [id], onDelete: Cascade)
+  userId       String
+  date         DateTime
+  totalClicks  Int      @default(0)
+  uniqueClicks Int      @default(0)
+  botClicks    Int      @default(0)
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
 
   @@unique([linkId, date])
   @@index([userId, date])
@@ -96,11 +93,11 @@ model DailyLinkAnalytics {
 }
 
 model AccountMergeRequest {
-  id               String   @id @default(uuid())
-  codeHash         String   @unique
+  id               String    @id @default(uuid())
+  codeHash         String    @unique
   targetUserId     String
-  targetUser       User     @relation(fields: [targetUserId], references: [id], onDelete: Cascade)
-  createdAt        DateTime @default(now())
+  targetUser       User      @relation(fields: [targetUserId], references: [id], onDelete: Cascade)
+  createdAt        DateTime  @default(now())
   expiresAt        DateTime
   consumedAt       DateTime?
   consumedByUserId String?
@@ -110,22 +107,23 @@ model AccountMergeRequest {
 }
 
 model AccountMergeEvent {
-  id                String   @id @default(uuid())
-  sourceUserId      String
-  targetUserId      String
-  sourceEmail       String
-  targetEmail       String
-  sourceUsername    String?
-  targetUsername    String?
-  mergedLinks       Int      @default(0)
-  mergedAccounts    Int      @default(0)
-  transferredSessions Int    @default(0)
-  conflictsJson     String?
-  createdAt         DateTime @default(now())
+  id                  String   @id @default(uuid())
+  sourceUserId        String
+  targetUserId        String
+  sourceEmail         String
+  targetEmail         String
+  sourceUsername      String?
+  targetUsername      String?
+  mergedLinks         Int      @default(0)
+  mergedAccounts      Int      @default(0)
+  transferredSessions Int      @default(0)
+  conflictsJson       String?
+  createdAt           DateTime @default(now())
 
   @@index([sourceUserId])
   @@index([targetUserId, createdAt])
 }
+
 model Account {
   id                String  @id @default(cuid())
   userId            String
@@ -140,7 +138,7 @@ model Account {
   id_token          String? @db.Text
   session_state     String?
 
-  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  user User @relation("accounts", fields: [userId], references: [id], onDelete: Cascade)
 
   @@unique([provider, providerAccountId])
 }
@@ -150,8 +148,7 @@ model Session {
   sessionToken String   @unique
   userId       String
   expires      DateTime
-
-  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 }
 
 model VerificationToken {
@@ -163,10 +160,10 @@ model VerificationToken {
 }
 
 model UsernameHistory {
-  id               String   @id @default(cuid())
-  previousUsername String   @unique
-  userId           String
-  createdAt        DateTime @default(now())
+  id        String   @id @default(uuid())
+  userId    String
+  username  String   @unique
+  createdAt DateTime @default(now())
 
   user User @relation(fields: [userId], references: [id], onDelete: Cascade)
 }

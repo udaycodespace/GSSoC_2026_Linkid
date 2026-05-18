@@ -6,32 +6,36 @@ import { ProfileFooter } from "./ProfileFooter";
 import { resolveUserByUsername } from "@/lib/userLookup";
 
 export async function generateMetadata({ params }: { params: Promise<{ username: string }> }) {
-    const { username } = await params;
-    const resolved = await resolveUserByUsername(username);
+    try {
+        const { username } = await params;
+        const resolved = await resolveUserByUsername(username);
 
-    if (!resolved) {
-        return {
-            title: `${username} | LinkID`,
-            description: `Check out ${username}'s LinkID profile.`,
-            openGraph: {
+        if (!resolved) {
+            return {
                 title: `${username} | LinkID`,
                 description: `Check out ${username}'s LinkID profile.`,
-                url: `https://linkid.vercel.app/${username}`,
-            },
-        };
-    }
+                openGraph: {
+                    title: `${username} | LinkID`,
+                    description: `Check out ${username}'s LinkID profile.`,
+                    url: `https://linkid.vercel.app/${username}`,
+                },
+            };
+        }
 
-    const canonicalUsername = resolved.canonicalUsername ?? username;
+        const canonicalUsername = resolved.canonicalUsername ?? username;
 
-    return {
-        title: `${canonicalUsername} | LinkID`,
-        description: `Check out ${canonicalUsername}'s LinkID profile.`,
-        openGraph: {
+        return {
             title: `${canonicalUsername} | LinkID`,
             description: `Check out ${canonicalUsername}'s LinkID profile.`,
-            url: `https://linkid.vercel.app/${canonicalUsername}`,
-        },
-    };
+            openGraph: {
+                title: `${canonicalUsername} | LinkID`,
+                description: `Check out ${canonicalUsername}'s LinkID profile.`,
+                url: `https://linkid.vercel.app/${canonicalUsername}`,
+            },
+        };
+    } catch {
+        return { title: "Error" };
+    }
 }
 
 export default async function PublicProfile({

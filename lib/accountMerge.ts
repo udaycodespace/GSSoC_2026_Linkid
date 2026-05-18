@@ -91,7 +91,7 @@ export async function completeAccountMerge(input: {
         prisma.user.findUnique({
             where: { id: input.sourceUserId },
             include: {
-                links: { orderBy: { order: "asc" } },
+                links: { orderBy: { position: "asc" } },
                 accounts: true,
                 sessions: true,
             },
@@ -99,7 +99,7 @@ export async function completeAccountMerge(input: {
         prisma.user.findUnique({
             where: { id: mergeRequest.targetUserId },
             include: {
-                links: { orderBy: { order: "asc" } },
+                links: { orderBy: { position: "asc" } },
                 accounts: true,
                 sessions: true,
             },
@@ -164,7 +164,7 @@ export async function completeAccountMerge(input: {
                 data: {
                     userId: targetUser.id,
                     platform,
-                    order: targetUser.links.length + mergedLinks + 1,
+                    position: targetUser.links.length + mergedLinks + 1,
                 },
             });
             mergeCandidatePlatforms.add(platform);
