@@ -48,3 +48,5 @@ next-env.d.ts
 dev.db
 *.sqlite
 *.sqlite3
+dist/
+>>>>>>> main
