@@ -23,7 +23,7 @@ export default function TermsOfServicePage() {
               Terms of Service
             </h1>
             <p className="mt-4 text-lg text-zinc-600 dark:text-zinc-300">
-              Last updated: {new Date().toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })}
+              Last updated: May 20, 2026
             </p>
             <div className="mx-auto mt-4 h-1 w-20 rounded-full bg-gradient-to-r from-violet-600 to-indigo-600" />
           </div>
@@ -37,7 +37,7 @@ export default function TermsOfServicePage() {
               <section>
                 <h2>1. Introduction</h2>
                 <p>
-                  Welcome to <strong>LinkID</strong> ("we," "our," or "us"). By accessing or using our platform at{' '}
+                  Welcome to <strong>LinkID</strong> (&quot;we,&quot; &quot;our,&quot; or &quot;us&quot;). By accessing or using our platform at{' '}
                   <Link href="/" className="text-violet-600 hover:text-violet-700 dark:text-violet-400">
                     linkid.qzz.io
                   </Link>
@@ -162,7 +162,7 @@ export default function TermsOfServicePage() {
                   </p>
                 </div>
                 <p className="text-sm italic">
-                  <strong>Disclaimer of Warranties:</strong> LinkID is provided "AS IS" and "AS AVAILABLE" 
+                  <strong>Disclaimer of Warranties:</strong> LinkID is provided &quot;AS IS&quot; and &quot;AS AVAILABLE&quot; 
                   without warranties of any kind, either express or implied, including but not limited to warranties 
                   of merchantability, fitness for a particular purpose, title, or non-infringement.
                 </p>
@@ -183,7 +183,7 @@ export default function TermsOfServicePage() {
                 <ul>
                   <li>
                     Through GitHub Issues:{' '}
-                    <Link href="https://github.com/vishnukothakapu/linkid/issues" className="text-violet-600 hover:text-violet-700 dark:text-violet-400" target="_blank">
+                    <Link href="https://github.com/vishnukothakapu/linkid/issues" className="text-violet-600 hover:text-violet-700 dark:text-violet-400" target="_blank" rel="noopener noreferrer">
                       github.com/vishnukothakapu/linkid
                     </Link>
                   </li>
@@ -195,7 +195,7 @@ export default function TermsOfServicePage() {
                   </li>
                   <li>
                     Through GitHub Discussions:{' '}
-                    <Link href="https://github.com/vishnukothakapu/linkid/discussions" className="text-violet-600 hover:text-violet-700 dark:text-violet-400" target="_blank">
+                    <Link href="https://github.com/vishnukothakapu/linkid/discussions" className="text-violet-600 hover:text-violet-700 dark:text-violet-400" target="_blank" rel="noopener noreferrer">
                       GitHub Discussions
                     </Link>
                   </li>
